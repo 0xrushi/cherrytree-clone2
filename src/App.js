@@ -17,9 +17,7 @@ function App() {
         <TopTaskbar/>
         <ButtonToolbar/>
         </div>
-        <div className={"container-fluid"} style={{marginTop:"2px"}}>
-            <BottomContent/>
-        </div>
+
     </BrowserRouter>
   );
 }

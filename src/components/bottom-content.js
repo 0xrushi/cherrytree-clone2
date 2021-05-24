@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react'
 import {Col, Container, Row} from "react-bootstrap";
 import "./bottom-content.css"
 import TextField from '@material-ui/core/TextField';
-import Tree from '@naisutech/react-tree'
-import TreeMenu, {ItemComponent} from 'react-simple-tree-menu';
+// import Tree from '@naisutech/react-tree'
+// import TreeMenu, {ItemComponent} from 'react-simple-tree-menu';
 // import '../../node_modules/react-simple-tree-menu/dist/main.css';
 import cherry_red from '../icons/48px/cherry_red.png'
 import cherry_purple from  '../icons/48px/cherry_purple.png'
-
+import cherry_red_svg from '../icons/svgs/cherry_red.svg'
 
 import PropTypes from 'prop-types';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -15,28 +15,29 @@ import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import TreeView from '@material-ui/lab/TreeView';
 import TreeItem from '@material-ui/lab/TreeItem';
 import Collapse from '@material-ui/core/Collapse';
+import { Icon } from '@material-ui/core';
+import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 function MinusSquare(props) {
     return (
-        <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
-            {/* tslint:disable-next-line: max-line-length */}
-            <path d="M22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0zM17.873 11.023h-11.826q-.375 0-.669.281t-.294.682v0q0 .401.294 .682t.669.281h11.826q.375 0 .669-.281t.294-.682v0q0-.401-.294-.682t-.669-.281z" />
-        </SvgIcon>
+            <ArrowDropDownIcon/>
     );
 }
 
 function PlusSquare(props) {
     return (
-        <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
-            {/* tslint:disable-next-line: max-line-length */}
-            <path d="M22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0zM17.873 12.977h-4.923v4.896q0 .401-.281.682t-.682.281v0q-.375 0-.669-.281t-.294-.682v-4.896h-4.923q-.401 0-.682-.294t-.281-.669v0q0-.401.281-.682t.682-.281h4.923v-4.896q0-.401.294-.682t.669-.281v0q.401 0 .682.281t.281.682v4.896h4.923q.401 0 .682.281t.281.682v0q0 .375-.281.669t-.682.294z" />
-        </SvgIcon>
+        // <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
+        //     {/* tslint:disable-next-line: max-line-length */}
+        //     <path d="M22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0zM17.873 12.977h-4.923v4.896q0 .401-.281.682t-.682.281v0q-.375 0-.669-.281t-.294-.682v-4.896h-4.923q-.401 0-.682-.294t-.281-.669v0q0-.401.281-.682t.682-.281h4.923v-4.896q0-.401.294-.682t.669-.281v0q.401 0 .682.281t.281.682v4.896h4.923q.401 0 .682.281t.281.682v0q0 .375-.281.669t-.682.294z" />
+        // </SvgIcon>
+        <ArrowRightIcon/>
     );
 }
 
 function CloseSquare(props) {
     return (
-        <SvgIcon className="close" fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
+        <SvgIcon className="close" fontSize="inherit" style={{ viewBox:"0 0 60 55"}} {...props}>
             {/* tslint:disable-next-line: max-line-length */}
             <path d="M17.485 17.512q-.281.281-.682.281t-.696-.268l-4.12-4.147-4.12 4.147q-.294.268-.696.268t-.682-.281-.281-.682.294-.669l4.12-4.147-4.12-4.147q-.294-.268-.294-.669t.281-.682.682-.281.696 .268l4.12 4.147 4.12-4.147q.294-.268.696-.268t.682.281 .281.669-.294.682l-4.12 4.147 4.12 4.147q.294.268 .294.669t-.281.682zM22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0z" />
         </SvgIcon>
@@ -149,11 +150,15 @@ class BottomContent extends React.Component{
         this.state = {
             'data':[],
             'pid':0,
+            'selected_id':0,
         }
     }
 
     componentDidMount() {
         this.setState({data:d});
+        // if(this.props.state["node_add_clicked"] == true){
+
+        // }
     }
 
     // () => {
@@ -199,8 +204,36 @@ class BottomContent extends React.Component{
         // document.getElementById("mtree").innerHTML = createTree(data)
     };
 
+    onItemClick = (event, value) => {
+        // event.item.selected = !event.item.selected;
+        console.log(value)
+        this.setState({
+            ...this.state,
+            selected_id:value
+        })
+        this.forceUpdate();
+    }
+
 
 render() {
+
+    console.log("props should be below")
+    console.log(this.props.state)
+    console.log(this.state.selected_id)
+    if (this.props.state !== undefined){
+    if(this.props.state.node_add_clicked === true){
+        // d.find(x => x.id === this.state.selected_id).items.concat({id: 87654327, label: "My file6", parentId: this.state.selected_id})
+        // d= 
+        // console.log(d)
+        d.find(x => x.id === 56789012).items = d.find(x => x.id === 56789012).items.concat({id: 87654327, label: "My file6", parentId: 56789012})
+        this.setState({
+            ...this.state,
+            data: d}
+            );
+        this.props.state.node_add_clicked = false
+        console.log(this.state)
+    }
+}
 
     return (
         <div className="full-height mx-0 my-0 px-0 py-0">
@@ -257,6 +290,7 @@ render() {
                             defaultCollapseIcon={<MinusSquare />}
                             defaultExpandIcon={<PlusSquare />}
                             defaultEndIcon={<CloseSquare />}
+                            onNodeSelect={this.onItemClick}
                         >
                                 {
                                     this.state.data.map(({ id, parentId, label, items }) => {

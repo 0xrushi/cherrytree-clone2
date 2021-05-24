@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useState } from 'react'
 import { Navbar, Nav, NavDropdown } from 'react-bootstrap';
 import "./button-toolbar.css";
 // import SvgCtTreeNodeAdd from "./iconsvgs/SvgCtTreeNodeAdd";
@@ -35,7 +35,7 @@ import ct_fmt_text_large3 from '../icons/48px/ct_fmt-txt-large3.png'
 import ct_fmt_text_small from '../icons/48px/ct_fmt-txt-small.png'
 import ct_fmt_text_subscript from '../icons/48px/ct_fmt-txt-subscript.png'
 import ct_fmt_text_monospace from '../icons/48px/ct_fmt-txt-monospace.png'
-
+import BottomContent from "./bottom-content";
 //
 // function importAll(r) {
 //     return r.keys().map(r);
@@ -44,9 +44,26 @@ import ct_fmt_text_monospace from '../icons/48px/ct_fmt-txt-monospace.png'
 
 const  ButtonToolbar = () => {
     // const menuList = ["File", "Edit", "Formatting", "Tree", "Search", "View", "Bookmarks", "Import", "Export", "Help"]
+    
+    const [state, setState] = useState({});
+    const [count, setCount] = useState(0)
+
+    function handleClick(e) {
+        // e.preventDefault(); 
+        setState({
+            ...state,
+            'node_add_clicked':true
+        })
+        console.log('The link was clicked.');
+      }
+
+    function onClickHandler(event) {
+        setCount(count => count + 1)
+    }
+    
     return(
         <div className="py-1 px-1 btn-toolbar-div">
-            <img src={ct_tree_node_add} className="btn btn-light ml-1"/>
+            <img id="btn_node_add" onClick={handleClick} src={ct_tree_node_add} className="btn btn-light ml-1"/>
             <img src={ct_tree_subnode_add} className="btn btn-light ml-1"/>
             <img src={ct_go_back} className="btn btn-light ml-1"/>
             <img src={ct_go_forward} className="btn btn-light ml-1"/>
@@ -78,6 +95,10 @@ const  ButtonToolbar = () => {
             <img src={ct_fmt_text_small} className="btn btn-light ml-1"/>
             <img src={ct_fmt_text_subscript} className="btn btn-light ml-1"/>
             <img src={ct_fmt_text_monospace} className="btn btn-light ml-1"/>
+            {/* <button onClick={onClickHandler}>Click me</button> */}
+            <div className={"container-fluid"} style={{marginTop:"2px"}}>
+                <BottomContent state = {state}/>
+            </div>
         </div>
     )
 };
