@@ -206,10 +206,15 @@ class BottomContent extends React.Component{
 
     onItemClick = (event, value) => {
         // event.item.selected = !event.item.selected;
-        console.log(value)
+        // console.log(event)
+        let parentid= d.filter(y => y.items.find(j => j.id === value))[0]
+        if(parentid!== undefined){
+            parentid = parentid.id
+        }
+        console.log("parent id is ", parentid)
         this.setState({
             ...this.state,
-            selected_id:value
+            selected_id:parentid
         })
         this.forceUpdate();
     }
@@ -225,7 +230,10 @@ render() {
         // d.find(x => x.id === this.state.selected_id).items.concat({id: 87654327, label: "My file6", parentId: this.state.selected_id})
         // d= 
         // console.log(d)
-        d.find(x => x.id === 56789012).items = d.find(x => x.id === 56789012).items.concat({id: 87654327, label: "My file6", parentId: 56789012})
+        
+        // let parentid= d.filter(y => y.items.find(j => j.id === this.state.selected_id))[0].id
+        // console.log("parent id is ", parentid)
+        d.find(x => x.id === this.state.selected_id).items = d.find(x => x.id === this.state.selected_id).items.concat({id: 87654327, label: "My file6", parentId: this.state.selected_id})
         this.setState({
             ...this.state,
             data: d}
