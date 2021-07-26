@@ -19,6 +19,9 @@ import { Icon } from '@material-ui/core';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
+import MonacoEditor from '@uiw/react-monacoeditor';
+
+
 function MinusSquare(props) {
     return (
             <ArrowDropDownIcon/>
@@ -326,7 +329,15 @@ render() {
                 <Col lg={10} className="full-height">
                     {/*<TextField fullWidth className="mtextfield col-lg-10" label="" variant="filled" multiline/>*/}
                     <p>{JSON.stringify(this.state.data)}</p>
-                    <textarea onChange={this.onChange} className="full-xy"></textarea>
+                    {/* <textarea onChange={this.onChange} className="full-xy"></textarea> */}
+                    
+                    <MonacoEditor
+                        language="python"
+                        value="<h1>I ♥ react-monacoeditor</h1>"
+                        options={{
+                            theme: 'vs-dark',
+                        }}
+                        />
                 </Col>
             </Row>
 
