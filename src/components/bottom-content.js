@@ -101,7 +101,7 @@ const d = {
         {
             id: '3',
             name: 'Child - 3',
-            text: '',
+            text: 'TEXT_CH3',
             children: [
                 {
                     id: '4',
@@ -170,8 +170,14 @@ class BottomContent extends React.Component {
     }
 
     onChange = (newValue) => {
-        console.log('editor new val', newValue)
+        const newSelectedPath =
+            findPath(this.state.data, 'id', this.state.selected_id) === ''
+                ? ''
+                : findPath(this.state.data, 'id', this.state.selected_id) +
+                  '.text'
+
         this.setState({ ...this.state, selected_code: newValue })
+        _.set(this.state.data, newSelectedPath, newValue)
     }
 
     onMck = () => {
@@ -187,84 +193,20 @@ class BottomContent extends React.Component {
         console.log(this.state.data)
     }
 
-    // onItemClick = (event, value) => {
-    //     if (value !== this.state.selected_id) {
-    //         const path =
-    //             findPath(this.state.data, 'id', this.state.selected_id) === ''
-    //                 ? ''
-    //                 : findPath(this.state.data, 'id', this.state.selected_id) +
-    //                   '.text'
-    //         console.log('path is', path, this.state.selected_id)
-
-    //         if (this.state.selected_code !== _.get(this.state.data, path)) {
-    //             _.set(this.state.data, path, this.state.selected_code)
-    //         }
-    //         this.setState({ ...this.state, selected_code: '' })
-    //         this.editor.setValue('')
-
-    //         const newSelectedPath =
-    //             findPath(this.state.data, 'id', value) === ''
-    //                 ? ''
-    //                 : findPath(this.state.data, 'id', value) + '.text'
-    //         const newCode = _.get(this.state.data, newSelectedPath)
-    //         console.log(
-    //             '🚀 ~ file: bottom-content.js ~ line 201 ~ BottomContent ~ code',
-    //             newCode
-    //         )
-    //         this.editor.setValue(newCode || '')
-
-    //         this.setState({
-    //             ...this.state,
-    //             selected_id: value,
-    //         })
-    //     }
-    // }
     onItemClick = (event, value) => {
-        if (value !== this.state.selected_id) {
-            // const path =
-            //     findPath(this.state.data, 'id', this.state.selected_id) === ''
-            //         ? ''
-            //         : findPath(this.state.data, 'id', this.state.selected_id) +
-            //           '.text'
-            // console.log('path is', path, this.state.selected_id)
+        this.state.selected_id = value
 
-            // if (this.state.selected_code !== _.get(this.state.data, path)) {
-            //     _.set(this.state.data, path, this.state.selected_code)
-            // }
-            // this.setState({ ...this.state, selected_code: '' })
-            // this.editor.setValue('')
-
+        if (value === this.state.selected_id) {
             const newSelectedPath =
                 findPath(this.state.data, 'id', value) === ''
                     ? ''
                     : findPath(this.state.data, 'id', value) + '.text'
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 234 ~ BottomContent ~ newSelectedPath',
-                newSelectedPath
-            )
-
             const newCode = _.get(this.state.data, newSelectedPath)
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 201 ~ BottomContent ~ code',
-                newCode
-            )
-            newCode !== ''
-                ? this.editor.setValue(newCode)
-                : this.editor.setValue('nul')
-
-            _.set(this.state.data, newSelectedPath, this.editor.getValue())
-
-            this.setState({
-                ...this.state,
-                selected_id: value,
-            })
+            this.editor.setValue(newCode || '')
         }
     }
 
     render() {
-        console.log('props should be below')
-        console.log(this.props.state)
-        console.log(this.state.selected_id)
         const renderTree = (nodes) => (
             <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
                 {Array.isArray(nodes.children)
@@ -294,7 +236,7 @@ class BottomContent extends React.Component {
                         <p>{JSON.stringify(this.state.data)}</p>
                         <MonacoEditor
                             language="python"
-                            value=""
+                            // value={this.state.selected_code}
                             options={{
                                 theme: 'vs-dark',
                             }}
