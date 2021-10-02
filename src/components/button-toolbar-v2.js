@@ -4,25 +4,32 @@ import { Navbar, Nav, NavDropdown } from 'react-bootstrap'
 import './button-toolbar.css'
 import BottomContent from './bottom-content'
 import { Container, Row, Col } from 'react-bootstrap'
-//
-// function importAll(r) {
-//     return r.keys().map(r);
-// }
-// const images = importAll(require.context('../icons/48px/', false, /\.(png|jpe?g|svg)$/));
 
 const ButtonToolbar = () => {
-    // const menuList = ["File", "Edit", "Formatting", "Tree", "Search", "View", "Bookmarks", "Import", "Export", "Help"]
-
     const [state, setState] = useState({})
     const [count, setCount] = useState(0)
 
-    function handleClick(e) {
-        // e.preventDefault();
+    function handleNodeAddClick(e) {
         setState({
             ...state,
             node_add_clicked: true,
         })
-        console.log('The link was clicked.')
+        console.log('The handleNodeAddClick was clicked.')
+    }
+    function handleSubNodeAddClick(e) {
+        setState({
+            ...state,
+            subnode_add_clicked: true,
+        })
+        console.log('The handleSubNodeAddClick was clicked.')
+    }
+
+    function handleDeleteNodeClick(e) {
+        setState({
+            ...state,
+            node_delete_clicked: true,
+        })
+        console.log('The handleDeleteNodeClick was clicked.')
     }
 
     function onClickHandler(event) {
@@ -36,25 +43,25 @@ const ButtonToolbar = () => {
                     <Button
                         variant="primary"
                         id="btn_node_add"
-                        onClick={handleClick}
+                        onClick={handleNodeAddClick}
                     >
                         Add Node
                     </Button>
-                    <Button class="mr-2" variant="secondary">
+                    <Button className="mr-2" variant="secondary">
                         Add Subnode
                     </Button>
                     <Button variant="danger">Delete Node</Button>
                     <Button variant="primary">
-                        <i class="far fa-save"></i>
+                        <i className="far fa-save"></i>
                     </Button>
                     <Button variant="primary">
-                        <i class="far fa-edit"></i>
+                        <i className="far fa-edit"></i>
                     </Button>
                 </Row>
             </Container>
 
             <div className={'container-fluid'} style={{ marginTop: '2px' }}>
-                <BottomContent state={state} />
+                <BottomContent data={{ ...state }} />
             </div>
         </div>
     )
