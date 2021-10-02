@@ -106,7 +106,6 @@ const d = {
                 {
                     id: '4',
                     name: 'Child - 4',
-                    lavda: 'sdsds',
                     text: '',
                 },
             ],
