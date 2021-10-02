@@ -19,6 +19,7 @@ import MonacoEditor from '@uiw/react-monacoeditor'
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
 
+var _ = require('lodash')
 function MinusSquare(props) {
     return <ArrowDropDownIcon />
 }
@@ -90,47 +91,87 @@ const iconStyle = {
 const d = {
     id: 'root',
     name: 'Parent',
+    text: '',
     children: [
         {
             id: '1',
             name: 'Child - 1',
+            text: '',
         },
         {
             id: '3',
             name: 'Child - 3',
+            text: '',
             children: [
                 {
                     id: '4',
                     name: 'Child - 4',
+                    lavda: 'sdsds',
+                    text: '',
                 },
             ],
         },
     ],
 }
 
+const findPath = (ob, key, value) => {
+    const path = []
+    const keyExists = (obj) => {
+        if (!obj || (typeof obj !== 'object' && !Array.isArray(obj))) {
+            return false
+        } else if (obj.hasOwnProperty(key) && obj[key] === value) {
+            return true
+        } else if (Array.isArray(obj)) {
+            let parentKey = path.length ? path.pop() : ''
+
+            for (let i = 0; i < obj.length; i++) {
+                path.push(`${parentKey}[${i}]`)
+                const result = keyExists(obj[i], key)
+                if (result) {
+                    return result
+                }
+                path.pop()
+            }
+        } else {
+            for (const k in obj) {
+                path.push(k)
+                const result = keyExists(obj[k], key)
+                if (result) {
+                    return result
+                }
+                path.pop()
+            }
+        }
+
+        return false
+    }
+
+    keyExists(ob)
+
+    return path.join('.')
+}
+
 class BottomContent extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: [],
+            data: d,
             pid: 0,
-            selected_id: 0,
+            selected_id: '0',
+            selected_code: '',
         }
     }
 
     componentDidMount() {
-        this.setState({ data: d })
+        this.setState({ data: d, selected_id: '0' })
+    }
+    editorDidMount = (editor) => {
+        this.editor = editor
     }
 
-    onChange = (event) => {
-        console.log('click event', event.target.value)
-        var textLines = event.target.value
-            .substr(0, event.target.value.selectionStart)
-            .split('\n')
-        var currentLineNumber = textLines.length
-        // var currentColumnIndex = textLines[textLines.length-1].length;
-        // console.log("Current Line Number "+ currentLineNumber+" Current Column Index "+currentColumnIndex );
-        console.log(this.state.pid)
+    onChange = (newValue) => {
+        console.log('editor new val', newValue)
+        this.setState({ ...this.state, selected_code: newValue })
     }
 
     onMck = () => {
@@ -146,8 +187,78 @@ class BottomContent extends React.Component {
         console.log(this.state.data)
     }
 
+    // onItemClick = (event, value) => {
+    //     if (value !== this.state.selected_id) {
+    //         const path =
+    //             findPath(this.state.data, 'id', this.state.selected_id) === ''
+    //                 ? ''
+    //                 : findPath(this.state.data, 'id', this.state.selected_id) +
+    //                   '.text'
+    //         console.log('path is', path, this.state.selected_id)
+
+    //         if (this.state.selected_code !== _.get(this.state.data, path)) {
+    //             _.set(this.state.data, path, this.state.selected_code)
+    //         }
+    //         this.setState({ ...this.state, selected_code: '' })
+    //         this.editor.setValue('')
+
+    //         const newSelectedPath =
+    //             findPath(this.state.data, 'id', value) === ''
+    //                 ? ''
+    //                 : findPath(this.state.data, 'id', value) + '.text'
+    //         const newCode = _.get(this.state.data, newSelectedPath)
+    //         console.log(
+    //             '🚀 ~ file: bottom-content.js ~ line 201 ~ BottomContent ~ code',
+    //             newCode
+    //         )
+    //         this.editor.setValue(newCode || '')
+
+    //         this.setState({
+    //             ...this.state,
+    //             selected_id: value,
+    //         })
+    //     }
+    // }
     onItemClick = (event, value) => {
-        console.log(value)
+        if (value !== this.state.selected_id) {
+            // const path =
+            //     findPath(this.state.data, 'id', this.state.selected_id) === ''
+            //         ? ''
+            //         : findPath(this.state.data, 'id', this.state.selected_id) +
+            //           '.text'
+            // console.log('path is', path, this.state.selected_id)
+
+            // if (this.state.selected_code !== _.get(this.state.data, path)) {
+            //     _.set(this.state.data, path, this.state.selected_code)
+            // }
+            // this.setState({ ...this.state, selected_code: '' })
+            // this.editor.setValue('')
+
+            const newSelectedPath =
+                findPath(this.state.data, 'id', value) === ''
+                    ? ''
+                    : findPath(this.state.data, 'id', value) + '.text'
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 234 ~ BottomContent ~ newSelectedPath',
+                newSelectedPath
+            )
+
+            const newCode = _.get(this.state.data, newSelectedPath)
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 201 ~ BottomContent ~ code',
+                newCode
+            )
+            newCode !== ''
+                ? this.editor.setValue(newCode)
+                : this.editor.setValue('nul')
+
+            _.set(this.state.data, newSelectedPath, this.editor.getValue())
+
+            this.setState({
+                ...this.state,
+                selected_id: value,
+            })
+        }
     }
 
     render() {
@@ -183,10 +294,13 @@ class BottomContent extends React.Component {
                         <p>{JSON.stringify(this.state.data)}</p>
                         <MonacoEditor
                             language="python"
-                            value="<h1>I ♥ react-monacoeditor</h1>"
+                            value=""
                             options={{
                                 theme: 'vs-dark',
                             }}
+                            // value={this.state.selected_code}
+                            onChange={this.onChange}
+                            editorDidMount={this.editorDidMount}
                         />
                     </Col>
                 </Row>
