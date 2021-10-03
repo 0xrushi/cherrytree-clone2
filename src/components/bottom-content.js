@@ -103,7 +103,7 @@ class BottomContent extends React.Component {
     // Add Node Click
     handleNodeAddClick(e) {
         console.log('The handleNodeAddClick was clicked.')
-        // this.state.data.children.push()
+        const title = prompt('Enter the title for new node', 'sometitle')
         this.setState({
             ...this.state,
             data: {
@@ -112,7 +112,7 @@ class BottomContent extends React.Component {
                     ...this.state.data.children,
                     {
                         id: ii++,
-                        name: 'Child - ' + ii,
+                        name: title,
                         children: [],
                         text: '',
                     },
@@ -147,9 +147,10 @@ class BottomContent extends React.Component {
         )
         const oldChildren =
             _.get(this.state.data, selectedPath + '.children') || []
+        const title = prompt('Enter the title for new node', 'sometitle')
         _.set(this.state.data, selectedPath + '.children', [
             ...oldChildren,
-            { id: ii++, name: 'Child - ' + ii, text: '' },
+            { id: ii++, name: title, text: '' },
         ])
         this.setState({
             ...this.state,
