@@ -84,10 +84,6 @@ const findPath = (ob, key, value) => {
     return path.join('.')
 }
 
-function handleSubNodeAddClick(e) {
-    console.log('The handleSubNodeAddClick was clicked.')
-}
-
 let ii = 50
 
 class BottomContent extends React.Component {
@@ -101,6 +97,7 @@ class BottomContent extends React.Component {
         }
         this.handleNodeAddClick = this.handleNodeAddClick.bind(this)
         this.handleDeleteNodeClick = this.handleDeleteNodeClick.bind(this)
+        this.handleSubNodeAddClick = this.handleSubNodeAddClick.bind(this)
     }
 
     // Add Node Click
@@ -127,34 +124,36 @@ class BottomContent extends React.Component {
     // Delete Node Click
 
     handleDeleteNodeClick(e) {
-        console.log('The handleDeleteNodeClick was clicked.')
         let selectedPath = findPath(
             this.state.data,
             'id',
             this.state.selected_id
         )
-        console.log(
-            '🚀 ~ file: bottom-content.js ~ line 185 ~ BottomContent ~ render ~ selectedPath',
-            selectedPath
-        )
         var deepCopy = _.cloneDeep(this.state.data)
-        console.log(
-            '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy BEFORE UNSET is',
-            deepCopy
-        )
         _.unset(deepCopy, selectedPath)
-        console.log(
-            '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy AFTER UNSET is',
-            deepCopy
-        )
-
-        // _.unset(deepCopy, selectedPath)
-
         this.setState({
             ...this.state,
             data: deepCopy,
             selected_id: 'root',
             selected_code: '',
+        })
+    }
+
+    handleSubNodeAddClick(e) {
+        let selectedPath = findPath(
+            this.state.data,
+            'id',
+            this.state.selected_id
+        )
+        const oldChildren =
+            _.get(this.state.data, selectedPath + '.children') || []
+        _.set(this.state.data, selectedPath + '.children', [
+            ...oldChildren,
+            { id: ii++, name: 'Child - ' + ii, text: '' },
+        ])
+        this.setState({
+            ...this.state,
+            data: this.state.data,
         })
     }
 
@@ -233,7 +232,11 @@ class BottomContent extends React.Component {
                         >
                             Add Node
                         </Button>
-                        <Button className="mr-2" variant="secondary">
+                        <Button
+                            className="mr-2"
+                            variant="secondary"
+                            onClick={this.handleSubNodeAddClick}
+                        >
                             Add Subnode
                         </Button>
                         <Button
