@@ -50,7 +50,9 @@ const ButtonToolbar = () => {
                     <Button className="mr-2" variant="secondary">
                         Add Subnode
                     </Button>
-                    <Button variant="danger">Delete Node</Button>
+                    <Button variant="danger" onClick={handleDeleteNodeClick}>
+                        Delete Node
+                    </Button>
                     <Button variant="primary">
                         <i className="far fa-save"></i>
                     </Button>

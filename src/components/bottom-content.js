@@ -113,11 +113,13 @@ class BottomContent extends React.Component {
     onChange = (newValue) => {
         console.log('padat', this.props)
 
-        const newSelectedPath =
-            findPath(this.state.data, 'id', this.state.selected_id) === ''
-                ? ''
-                : findPath(this.state.data, 'id', this.state.selected_id) +
-                  '.text'
+        let newSelectedPath = findPath(
+            this.state.data,
+            'id',
+            this.state.selected_id
+        )
+        newSelectedPath =
+            newSelectedPath === '' ? '' : newSelectedPath + '.text'
 
         this.setState({ ...this.state, selected_code: newValue })
         _.set(this.state.data, newSelectedPath, newValue)
@@ -138,12 +140,16 @@ class BottomContent extends React.Component {
 
     onItemClick = (event, value) => {
         this.state.selected_id = value
+        console.log(
+            '🚀 ~ file: bottom-content.js ~ line 142 ~ BottomContent ~ onItemClick',
+            value
+        )
 
         if (value === this.state.selected_id) {
-            const newSelectedPath =
-                findPath(this.state.data, 'id', value) === ''
-                    ? ''
-                    : findPath(this.state.data, 'id', value) + '.text'
+            let newSelectedPath = findPath(this.state.data, 'id', value)
+            newSelectedPath =
+                newSelectedPath === '' ? '' : newSelectedPath + '.text'
+
             const newCode = _.get(this.state.data, newSelectedPath)
             this.editor.setValue(newCode || '')
         }
@@ -151,29 +157,84 @@ class BottomContent extends React.Component {
 
     render() {
         // Add Node Click
+        console.log(
+            '🚀 ~ file: bottom-content.js ~ line 160 ~ selected id is',
+            this.state.selected_id
+        )
         if (this.props.data.node_add_clicked) {
-            this.setState({
-                ...this.state,
-                data: {
-                    ...this.state.data,
-                    children: [
-                        ...this.state.data.children,
-                        {
-                            id: '5',
-                            name: 'Child - 5',
-                            children: [],
-                            text: '',
-                        },
-                    ],
-                },
+            console.log('state just adfter add call', this.state)
+            // this.setState({
+            //     ...this.state,
+            //     data: {
+            //         ...this.state.data,
+            //         children: [
+            //             ...this.state.data.children,
+            //             {
+            //                 id: '5',
+            //                 name: 'Child - 5',
+            //                 children: [],
+            //                 text: '',
+            //             },
+            //         ],
+            //     },
+            // })
+            this.state.data.children.push({
+                id: '5',
+                name: 'Child - 5',
+                children: [],
+                text: '',
             })
             this.props.data.node_add_clicked = false
+        }
+
+        // Delete Node Click
+        if (this.props.data.node_delete_clicked) {
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 176 ~ BottomContent ~ render ~         if (this.props.data.node_delete_clicked',
+                this.state
+            )
+            let selectedPath = findPath(
+                this.state.data,
+                'id',
+                this.state.selected_id
+            )
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 185 ~ BottomContent ~ render ~ selectedPath',
+                selectedPath
+            )
+            var deepCopy = _.cloneDeep(this.state.data)
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy BEFORE UNSET is',
+                deepCopy
+            )
+            _.unset(deepCopy, selectedPath)
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy AFTER UNSET is',
+                deepCopy
+            )
+
+            // _.unset(deepCopy, selectedPath)
+
+            this.setState({
+                ...this.state,
+                data: deepCopy,
+                selected_id: 'root',
+                selected_code: '',
+            })
+
+            console.log(
+                '🚀 ~ file: bottom-content.js ~ lbottom after deepcopy sertonm',
+                this.state
+            )
+            this.props.data.node_delete_clicked = false
         }
 
         const renderTree = (nodes) => (
             <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
                 {Array.isArray(nodes.children)
-                    ? nodes.children.map((node) => renderTree(node))
+                    ? nodes.children.map((node) =>
+                          node ? renderTree(node) : <></>
+                      )
                     : null}
             </TreeItem>
         )
@@ -191,7 +252,7 @@ class BottomContent extends React.Component {
                                 defaultExpandIcon={<ChevronRightIcon />}
                                 onNodeSelect={this.onItemClick}
                             >
-                                {renderTree(this.state.data)}
+                                {renderTree(this.state.data || {})}
                             </TreeView>
                         </div>
                     </Col>
