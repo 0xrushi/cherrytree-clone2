@@ -14,7 +14,7 @@ function App() {
         <BrowserRouter>
             <div>
                 {/* <TopTaskbar /> */}
-                <ButtonToolbar />
+                <BottomContent />
             </div>
         </BrowserRouter>
     )

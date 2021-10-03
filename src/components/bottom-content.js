@@ -1,23 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Col, Container, Row } from 'react-bootstrap'
 import './bottom-content.css'
-import TextField from '@material-ui/core/TextField'
-import cherry_red from '../icons/48px/cherry_red.png'
-import cherry_purple from '../icons/48px/cherry_purple.png'
-import cherry_red_svg from '../icons/svgs/cherry_red.svg'
-import PropTypes from 'prop-types'
-import SvgIcon from '@material-ui/core/SvgIcon'
-import { fade, makeStyles, withStyles } from '@material-ui/core/styles'
 import TreeView from '@material-ui/lab/TreeView'
 import TreeItem from '@material-ui/lab/TreeItem'
-import Collapse from '@material-ui/core/Collapse'
-import { Icon } from '@material-ui/core'
-import ArrowRightIcon from '@material-ui/icons/ArrowRight'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
 import MonacoEditor from '@uiw/react-monacoeditor'
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import ChevronRightIcon from '@material-ui/icons/ChevronRight'
+
+import { Button } from 'react-bootstrap'
+import './button-toolbar.css'
 
 var _ = require('lodash')
 
@@ -92,6 +84,12 @@ const findPath = (ob, key, value) => {
     return path.join('.')
 }
 
+function handleSubNodeAddClick(e) {
+    console.log('The handleSubNodeAddClick was clicked.')
+}
+
+let ii = 50
+
 class BottomContent extends React.Component {
     constructor(props) {
         super(props)
@@ -101,6 +99,63 @@ class BottomContent extends React.Component {
             selected_id: '0',
             selected_code: '',
         }
+        this.handleNodeAddClick = this.handleNodeAddClick.bind(this)
+        this.handleDeleteNodeClick = this.handleDeleteNodeClick.bind(this)
+    }
+
+    // Add Node Click
+    handleNodeAddClick(e) {
+        console.log('The handleNodeAddClick was clicked.')
+        // this.state.data.children.push()
+        this.setState({
+            ...this.state,
+            data: {
+                ...this.state.data,
+                children: [
+                    ...this.state.data.children,
+                    {
+                        id: ii++,
+                        name: 'Child - ' + ii,
+                        children: [],
+                        text: '',
+                    },
+                ],
+            },
+        })
+    }
+
+    // Delete Node Click
+
+    handleDeleteNodeClick(e) {
+        console.log('The handleDeleteNodeClick was clicked.')
+        let selectedPath = findPath(
+            this.state.data,
+            'id',
+            this.state.selected_id
+        )
+        console.log(
+            '🚀 ~ file: bottom-content.js ~ line 185 ~ BottomContent ~ render ~ selectedPath',
+            selectedPath
+        )
+        var deepCopy = _.cloneDeep(this.state.data)
+        console.log(
+            '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy BEFORE UNSET is',
+            deepCopy
+        )
+        _.unset(deepCopy, selectedPath)
+        console.log(
+            '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy AFTER UNSET is',
+            deepCopy
+        )
+
+        // _.unset(deepCopy, selectedPath)
+
+        this.setState({
+            ...this.state,
+            data: deepCopy,
+            selected_id: 'root',
+            selected_code: '',
+        })
     }
 
     componentDidMount() {
@@ -156,79 +211,6 @@ class BottomContent extends React.Component {
     }
 
     render() {
-        // Add Node Click
-        console.log(
-            '🚀 ~ file: bottom-content.js ~ line 160 ~ selected id is',
-            this.state.selected_id
-        )
-        if (this.props.data.node_add_clicked) {
-            console.log('state just adfter add call', this.state)
-            // this.setState({
-            //     ...this.state,
-            //     data: {
-            //         ...this.state.data,
-            //         children: [
-            //             ...this.state.data.children,
-            //             {
-            //                 id: '5',
-            //                 name: 'Child - 5',
-            //                 children: [],
-            //                 text: '',
-            //             },
-            //         ],
-            //     },
-            // })
-            this.state.data.children.push({
-                id: '5',
-                name: 'Child - 5',
-                children: [],
-                text: '',
-            })
-            this.props.data.node_add_clicked = false
-        }
-
-        // Delete Node Click
-        if (this.props.data.node_delete_clicked) {
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 176 ~ BottomContent ~ render ~         if (this.props.data.node_delete_clicked',
-                this.state
-            )
-            let selectedPath = findPath(
-                this.state.data,
-                'id',
-                this.state.selected_id
-            )
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 185 ~ BottomContent ~ render ~ selectedPath',
-                selectedPath
-            )
-            var deepCopy = _.cloneDeep(this.state.data)
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy BEFORE UNSET is',
-                deepCopy
-            )
-            _.unset(deepCopy, selectedPath)
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ line 193 ~ deepcopy AFTER UNSET is',
-                deepCopy
-            )
-
-            // _.unset(deepCopy, selectedPath)
-
-            this.setState({
-                ...this.state,
-                data: deepCopy,
-                selected_id: 'root',
-                selected_code: '',
-            })
-
-            console.log(
-                '🚀 ~ file: bottom-content.js ~ lbottom after deepcopy sertonm',
-                this.state
-            )
-            this.props.data.node_delete_clicked = false
-        }
-
         const renderTree = (nodes) => (
             <TreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
                 {Array.isArray(nodes.children)
@@ -240,37 +222,66 @@ class BottomContent extends React.Component {
         )
 
         return (
-            <div className="full-height mx-0 my-0 px-0 py-0">
-                <button onClick={this.onMck} />
-                <Row className="full-xy ">
-                    <Col className="full-height" lg={2}>
-                        <div id="mtree">
-                            <TreeView
-                                className="asa"
-                                defaultCollapseIcon={<ExpandMoreIcon />}
-                                defaultExpanded={['root']}
-                                defaultExpandIcon={<ChevronRightIcon />}
-                                onNodeSelect={this.onItemClick}
-                            >
-                                {renderTree(this.state.data || {})}
-                            </TreeView>
-                        </div>
-                    </Col>
-                    <Col lg={10} className="full-height">
-                        <p>{JSON.stringify(this.state.data)}</p>
-                        <MonacoEditor
-                            language="python"
-                            // value={this.state.selected_code}
-                            options={{
-                                theme: 'vs-dark',
-                            }}
-                            // value={this.state.selected_code}
-                            onChange={this.onChange}
-                            editorDidMount={this.editorDidMount}
-                        />
-                    </Col>
-                </Row>
-            </div>
+            <>
+                {/* Button toolbar */}
+                <Container fluid>
+                    <Row style={{ justifyContent: 'right' }}>
+                        <Button
+                            variant="primary"
+                            id="btn_node_add"
+                            onClick={this.handleNodeAddClick}
+                        >
+                            Add Node
+                        </Button>
+                        <Button className="mr-2" variant="secondary">
+                            Add Subnode
+                        </Button>
+                        <Button
+                            variant="danger"
+                            onClick={this.handleDeleteNodeClick}
+                        >
+                            Delete Node
+                        </Button>
+                        <Button variant="primary">
+                            <i className="far fa-save"></i>
+                        </Button>
+                        <Button variant="primary">
+                            <i className="far fa-edit"></i>
+                        </Button>
+                    </Row>
+                </Container>
+                <div className="full-height mx-0 my-0 px-0 py-0">
+                    <button onClick={this.onMck} />
+                    <Row className="full-xy ">
+                        <Col className="full-height" lg={2}>
+                            <div id="mtree">
+                                <TreeView
+                                    className="asa"
+                                    defaultCollapseIcon={<ExpandMoreIcon />}
+                                    defaultExpanded={['root']}
+                                    defaultExpandIcon={<ChevronRightIcon />}
+                                    onNodeSelect={this.onItemClick}
+                                >
+                                    {renderTree(this.state.data || {})}
+                                </TreeView>
+                            </div>
+                        </Col>
+                        <Col lg={10} className="full-height">
+                            <p>{JSON.stringify(this.state.data)}</p>
+                            <MonacoEditor
+                                language="python"
+                                // value={this.state.selected_code}
+                                options={{
+                                    theme: 'vs-dark',
+                                }}
+                                // value={this.state.selected_code}
+                                onChange={this.onChange}
+                                editorDidMount={this.editorDidMount}
+                            />
+                        </Col>
+                    </Row>
+                </div>
+            </>
         )
     }
 }
