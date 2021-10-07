@@ -1,3 +1,13 @@
+
+Ever wanted a treestyle web text editor like cherrytree?
+
+Well here you go!!. Pastetreee is a fork of [StagBin](https://github.com/StagBIN/frontend), where people can organize and share pastes categorized by treeview.
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
